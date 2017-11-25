@@ -26,16 +26,23 @@ class App extends Component {
 
     render() {
         return (
-            <div className="container">
-                <canvas
-                    ref={c => {
-                        this.myCanvas = c;
-                    }}
-                    className="canvas"
-                    width="1000"
-                    height="1000"/>
-                <button className="start" onClick={this.handleStartClick.bind(this)}>Start</button>
-            </div>
+          <div>
+              <NavBar/>
+              <div className="game-play">
+                  <TeamTab team={names1}/>
+                  <div className="container">
+                      <canvas
+                        ref={c => {
+                          this.myCanvas = c;
+                        }}
+                        className="canvas"
+                        width="1000"
+                        height="1000"/>
+                      <button className="start" onClick={this.handleStartClick.bind(this)}>Start</button>
+                  </div>
+                  <TeamTab team={names2}/>
+              </div>
+          </div>
         );
     };
 
