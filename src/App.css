@@ -8,6 +8,16 @@
     /*/width: 1024px;*/
 }
 
+.container-fluid {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.navbar {
+    background: dimgray;
+    border: 1px solid dimgray;
+}
+
 .player {
     width: 15px;
     height: 15px;
@@ -39,4 +49,9 @@
 
 .data-column {
   width: 80px;
+}
+
+.logo {
+    height: 50px;
+    color: white;
 }

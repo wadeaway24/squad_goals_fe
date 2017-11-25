@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import logo from './assets/logo/logo_l.png';
 
 class NavBar extends Component {
 
@@ -12,9 +13,7 @@ class NavBar extends Component {
     return (
       <nav className="navbar navbar-inverse">
         <div className="container-fluid">
-          <div className="navbar-header">
-            <a className="navbar-brand">Squad Goals</a>
-          </div>
+          <img className="logo" src={logo} alt=""/>
           <form className="navbar-form navbar-left" onSubmit={this.renderNewGameRecap.bind(this)}>
             <div className="form-group">
               <input type="text" className="form-control" ref="match_id" placeholder="Insert Match ID"/>
