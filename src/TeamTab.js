@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import skull from './assets/icons/skull.png';
 
 class TeamTab extends Component {
 
@@ -7,7 +8,7 @@ class TeamTab extends Component {
       return (
         <tr key={i}>
           <td><h4 key={i}>{player.name}</h4></td>
-          <td>{player.is_dead ? <i className="fa fa-wheelchair" />: <i className="fa fa-check" />}</td>
+          <td>{player.is_dead ? <img src={ skull } className="skull" alt=""/>: <i className="fa fa-check" />}</td>
         </tr>
         )
       })
