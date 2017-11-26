@@ -14,6 +14,8 @@ class App extends Component {
         this.state = {
             isLoaded: false,
             data: {},
+            mapXlen: 0,
+            mapYlen: 0,
         }
     }
 
@@ -91,18 +93,22 @@ class App extends Component {
         let icon = new Image();
         icon.src = map_player;
 
+        const { mapYlen, mapXlen } = this.state;
+
         for (let obj of this.state.data) {
 
             console.log(obj);
             ctx.drawImage(background, 0, 0);
             for (let player of obj.players) {
+                const xCoord = 1000 * player.locationX / mapXlen;
+                const yCoord = 1000 * player.locationY / mapYlen;
 
                 // happy drawing from here on
                 ctx.font = "15px Arial bold";
                 ctx.fillStyle = "red";
-                ctx.strokeText(player.player_name, player.locationX - player.player_name.length - 14, player.locationY - 3);
+                // ctx.strokeText(player.player_name, player.locationX - player.player_name.length - 14, player.locationY - 3);
 
-                ctx.drawImage(icon, player.locationX, player.locationY, 22, 16);
+                ctx.drawImage(icon, xCoord, yCoord, 22, 16);
 
             }
             await this.delay(300);
@@ -117,7 +123,7 @@ class App extends Component {
         let response;
         let data;
         try {
-            response = await fetch('http://localhost:8080/api/mock/getData', {
+            response = await fetch('http://localhost:8080/api/gameSession/getData/37575701', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +135,18 @@ class App extends Component {
             console.log(e)
         } finally {
             console.log(data);
-            this.setState({data: data.ticks, isLoaded: true});
+
+            const x0 = data.gameMap.corner0x;
+            const x1 = data.gameMap.corner1x;
+            const y0 = data.gameMap.corner0y;
+            const y1 = data.gameMap.corner1y;
+
+            this.setState({
+                data: data.ticks,
+                isLoaded: true,
+                mapXlen: x0 > x1 ? x0 - x1 : x1 - x0,
+                mapYlen: y0 > y1 ? y0 - y1 : y1 - y0,
+            });
         }
     }
 }
