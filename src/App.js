@@ -5,6 +5,7 @@ import NavBar from './NavBar';
 import MDSpinner from 'react-md-spinner';
 import map from './assets/maps/Narva_Minimap.jpg';
 import map_player from './assets/icons/usa_flag_s.png';
+import map_player2 from './assets/icons/militia_flag_s.png';
 
 
 class App extends Component {
@@ -35,6 +36,10 @@ class App extends Component {
             let icon = new Image();
             icon.src = map_player;
             icon.onload = () => {
+            }
+            let icon2 = new Image();
+            icon2.src = map_player2;
+            icon2.onload = () => {
             }
         }
 
@@ -93,29 +98,64 @@ class App extends Component {
         let icon = new Image();
         icon.src = map_player;
 
+        let icon2 = new Image();
+        icon2.src = map_player2;
+
+        let team1 = [];
+        let team2 = [];
+
+        let generatedNames = [];
         const { mapYlen, mapXlen } = this.state;
 
+        let firstLoad = true;
         for (let obj of this.state.data) {
-
             console.log(obj);
             ctx.drawImage(background, 0, 0);
             for (let player of obj.players) {
+
+                if (generatedNames.filter(name => name.playerId === player.playerId).length === 0) {
+                    console.log("Sees");
+                    let min = Math.ceil(0);
+                    let max = Math.floor(playerNames.length);
+                    let randomNr = Math.floor(Math.random() * (max - min)) + min;
+                    player.player_name = playerNames[randomNr] + '' + randomNr;
+                    generatedNames.push({player_name: player.player_name, playerId: player.playerId});
+                } else {
+                    player.player_name =  generatedNames.filter(name => name.playerId === player.playerId)[0].player_name;
+                }
+
+
                 const xCoord = 1000 * player.locationX / mapXlen;
                 const yCoord = 1000 * player.locationY / mapYlen;
+
+                if (firstLoad) {
+                    if (yCoord > 500) {
+                        team1.push(player.player_name);
+                    } else {
+                        team2.push(player.player_name);
+                    }
+                    firstLoad = false;
+                }
 
                 // happy drawing from here on
                 ctx.font = "15px Arial bold";
                 ctx.fillStyle = "red";
-                // ctx.strokeText(player.player_name, player.locationX - player.player_name.length - 14, player.locationY - 3);
+                let member1  = team1.filter(name => name === player.player_name)[0];
+                let member2 = team2.filter(name => name === player.player_name)[0];
+                if (member1 || yCoord < 500) {
+                    ctx.drawImage(icon, xCoord, yCoord, 22, 16);
 
-                ctx.drawImage(icon, xCoord, yCoord, 22, 16);
+                } else if (member2 || yCoord > 500) {
+                    ctx.drawImage(icon2, xCoord, yCoord, 22, 16);
+                }
+                ctx.strokeText(player.player_name, xCoord - player.player_name.length - 14, yCoord - 3);
 
             }
-            await this.delay(300);
+            await this.delay(200);
         }
     }
 
-    delay(ms) {
+    delay (ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -196,3 +236,64 @@ const names2 = {
         }
     ]
 };
+
+const playerNames = [
+    "NinjasInPyjamas",
+    "Mistake",
+    "SomeTacos",
+    "12Nuns",
+    "AHungryPolarBear",
+    "aDistraction",
+    "XBox",
+    "ShutDown",
+    "RollingBarrelz",
+    "Something",
+    "AllGoodNamesRGone",
+    "Error404",
+    "CerealKillah",
+    "WarHawk",
+    "Kladenstien",
+    "Audacity",
+    "JackSparrow",
+    "RuthlessSlayer",
+    "InfernalHeir",
+    "TheSilentBang",
+    "DarkLord",
+    "NoTolerance",
+    "DexterzProtege",
+    "BeoWulf",
+    "LoneWalker",
+    "SavageHorseman",
+    "GunnerBomb",
+    "CapnBloodBeard",
+    "LastSamurai",
+    "PetalPrincess",
+    "FallenAngel",
+    "Hraefn",
+    "IMTooPrettyToDie",
+    "CatWoman",
+    "SniperFemme",
+    "Zeldarian",
+    "CursedWings",
+    "IceQueen",
+    "SongbirdFatale",
+    "LadyPhantom",
+    "WarriorPriestess",
+    "DeathWish",
+    "SeekNDestroy",
+    "BegForMercy",
+    "ElNino",
+    "FreakingOblin",
+    "NineTees",
+    "EndlessFacepalms",
+    "KungFuMonk",
+    "BrainAxe",
+    "PlzJustDie",
+    "Gridlock",
+    "AndKeySinister",
+    "Chill",
+    "AlQaholic",
+    "HoofHearted",
+    "666Disaster",
+    "MasterGhostlyPresence"
+];

@@ -18,12 +18,12 @@ class TeamTab extends Component {
   render() {
     return (
       <div className="team-tab">
-        <h2>{this.props.team.name}:</h2>
+        <h2>Team:</h2>
         <table>
           <tbody>
           <tr>
             <td><div className="data-column">Name</div></td>
-            <td><div className="data-column">Bueno?</div></td>
+            <td><div className="data-column">Alive</div></td>
           </tr>
           {this.renderTeamMembers(this.props.team.players)}
           </tbody>
