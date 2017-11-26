@@ -38,6 +38,12 @@ class App extends Component {
 
     }
 
+    renderNewGameRecap(e) {
+        e.preventDefault();
+        console.log("Inserted value:" + this.refs.match_id.value);
+        console.log("you just pushed the BUTTON");
+    }
+
     render() {
         const {isLoaded} = this.state;
 
@@ -50,6 +56,13 @@ class App extends Component {
         return (
             <div>
                 <NavBar/>
+                <form className="navbar-form center" onSubmit={this.renderNewGameRecap.bind(this)}>
+                    <div className="form-group">
+                        <input type="text" className="form-control" ref="match_id" placeholder="Insert Match ID"/>
+                    </div>
+                    <button className="btn btn-default" button="submit">Find Recap</button>
+                    <button className="start" onClick={this.handleStartClick.bind(this)}>Start</button>
+                </form>
                 <div className="game-play">
                     <TeamTab team={names1}/>
                     <div className="container">
@@ -60,7 +73,6 @@ class App extends Component {
                             className="canvas"
                             width="1000"
                             height="1000"/>
-                        <button className="start" onClick={this.handleStartClick.bind(this)}>Start</button>
                     </div>
                     <TeamTab team={names2}/>
                 </div>
