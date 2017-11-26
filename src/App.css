@@ -69,3 +69,23 @@ body {
 .skull {
     height: 20px;
 }
+
+.loaderWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.text {
+    color: white;
+    font-size: 30px;
+    margin: 200px 0 20px;
+}
+
+.smallText {
+    /*color: white;*/
+    font-size: 20px;
+    margin-bottom: 40px;
+}

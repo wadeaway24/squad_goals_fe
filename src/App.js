@@ -15,8 +15,10 @@ class App extends Component {
         this.state = {
             isLoaded: false,
             data: {},
-            mapXlen: 0,
-            mapYlen: 0,
+            mapXmin: 0,
+            mapYmin: 0,
+            mapXmax: 0,
+            mapYmax: 0,
         }
     }
 
@@ -56,7 +58,12 @@ class App extends Component {
 
         if (!isLoaded) {
             return (
-                <MDSpinner/>
+                <div className="loaderWrapper">
+                    <div className="text">This might take a minute...</div>
+                    <div className="smallText">or ten</div>
+
+                    <MDSpinner className="loader" size={80}/>
+                </div>
             );
         }
 
@@ -105,57 +112,69 @@ class App extends Component {
         let team2 = [];
 
         let generatedNames = [];
-        const { mapYlen, mapXlen } = this.state;
+        const {mapYmin, mapXmin, mapYmax, mapXmax} = this.state;
+        let playerPositions = {};
 
-        let firstLoad = true;
+        // let firstLoad = true;
         for (let obj of this.state.data) {
-            console.log(obj);
+            // console.log(obj);
             ctx.drawImage(background, 0, 0);
             for (let player of obj.players) {
 
                 if (generatedNames.filter(name => name.playerId === player.playerId).length === 0) {
-                    console.log("Sees");
+                    // console.log("Sees");
                     let min = Math.ceil(0);
                     let max = Math.floor(playerNames.length);
                     let randomNr = Math.floor(Math.random() * (max - min)) + min;
                     player.player_name = playerNames[randomNr] + '' + randomNr;
                     generatedNames.push({player_name: player.player_name, playerId: player.playerId});
                 } else {
-                    player.player_name =  generatedNames.filter(name => name.playerId === player.playerId)[0].player_name;
+                    player.player_name = generatedNames.filter(name => name.playerId === player.playerId)[0].player_name;
                 }
 
+                const xCoord = (player.locationX - mapXmin) * 1000 / (mapXmax - mapXmin);
+                const yCoord = (player.locationY - mapYmin) * 1000 / (mapYmax - mapYmin);
 
-                const xCoord = 1000 * player.locationX / mapXlen;
-                const yCoord = 1000 * player.locationY / mapYlen;
-
-                if (firstLoad) {
+                if (!Object.keys(playerPositions).includes(player.playerId)) {
                     if (yCoord > 500) {
                         team1.push(player.player_name);
                     } else {
                         team2.push(player.player_name);
                     }
-                    firstLoad = false;
                 }
+
+                playerPositions = {
+                    ...playerPositions,
+                    [player.playerId]: {xCoord, yCoord, player_name: player.player_name},
+                };
+
+                // console.log(player.locationX, xCoord);
+            }
+
+            // console.log(playerPositions);
+
+            for (let key in playerPositions) {
+                let ply = playerPositions[key];
 
                 // happy drawing from here on
                 ctx.font = "15px Arial bold";
                 ctx.fillStyle = "red";
-                let member1  = team1.filter(name => name === player.player_name)[0];
-                let member2 = team2.filter(name => name === player.player_name)[0];
-                if (member1 || yCoord < 500) {
-                    ctx.drawImage(icon, xCoord, yCoord, 22, 16);
+                let member1 = team1.filter(name => name === ply.player_name)[0];
+                let member2 = team2.filter(name => name === ply.player_name)[0];
+                if (member1 || ply.yCoord < 500) {
+                    ctx.drawImage(icon, ply.xCoord, ply.yCoord, 22, 16);
 
-                } else if (member2 || yCoord > 500) {
-                    ctx.drawImage(icon2, xCoord, yCoord, 22, 16);
+                } else if (member2 || ply.yCoord > 500) {
+                    ctx.drawImage(icon2, ply.xCoord, ply.yCoord, 22, 16);
                 }
-                ctx.strokeText(player.player_name, xCoord - player.player_name.length - 14, yCoord - 3);
-
+                ctx.strokeText(ply.player_name, ply.xCoord - ply.player_name.length - 14, ply.yCoord - 3);
             }
-            await this.delay(200);
+
+            await this.delay(10);
         }
     }
 
-    delay (ms) {
+    delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -174,7 +193,7 @@ class App extends Component {
         } catch (e) {
             console.log(e)
         } finally {
-            console.log(data);
+            // console.log(data);
 
             const x0 = data.gameMap.corner0x;
             const x1 = data.gameMap.corner1x;
@@ -184,8 +203,10 @@ class App extends Component {
             this.setState({
                 data: data.ticks,
                 isLoaded: true,
-                mapXlen: x0 > x1 ? x0 - x1 : x1 - x0,
-                mapYlen: y0 > y1 ? y0 - y1 : y1 - y0,
+                mapXmin: x0 > x1 ? x1 : x0,
+                mapYmin: y0 > y1 ? y1 : y0,
+                mapXmax: x0 > x1 ? x0 : x1,
+                mapYmax: y0 > y1 ? y0 : y1,
             });
         }
     }
